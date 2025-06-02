@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 import spacy
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
@@ -11,6 +11,7 @@ nlp = spacy.load("en_core_web_sm")
 sentiment_analyzer = SentimentIntensityAnalyzer()
 
 API_KEY = "vamshi"
+
 @app.route('/', methods=['GET'])
 def home():
     return jsonify({"message": "Welcome to the NLP API! Use /analyze endpoint."})
@@ -20,6 +21,7 @@ def analyze():
     key = request.headers.get('x-api-key')
     if key != API_KEY:
         return jsonify({"error": "Unauthorized"}), 401
+
     data = request.json
     sentence = data.get("sentence", "")
 
@@ -39,6 +41,11 @@ def analyze():
         "sentiment": sentiment,
         "entities": entities
     })
+
+# Serve the test.html file from /test
+@app.route('/test', methods=['GET'])
+def test_page():
+    return send_from_directory('static', 'test.html')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5002)

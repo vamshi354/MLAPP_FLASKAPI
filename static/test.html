@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NLP API Tester</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background-color: #f9f9f9;
+    }
+    h2 {
+      color: #333;
+    }
+    textarea {
+      width: 100%;
+      padding: 10px;
+      font-size: 1em;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px 15px;
+      font-size: 1em;
+    }
+    pre {
+      background-color: #eee;
+      padding: 15px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Test NLP /analyze API</h2>
+
+  <form id="analyzeForm">
+    <label for="sentence">Enter a sentence:</label><br />
+    <textarea id="sentence" name="sentence" rows="4" placeholder="Enter text to analyze...">OpenAI is awesome!</textarea><br />
+    <button type="submit">Analyze</button>
+  </form>
+
+  <h3>Response:</h3>
+  <pre id="response">Awaiting input...</pre>
+
+  <script>
+    document.getElementById('analyzeForm').addEventListener('submit', async function (event) {
+      event.preventDefault();
+
+      const sentence = document.getElementById('sentence').value;
+      const responseArea = document.getElementById('response');
+      responseArea.textContent = "🔄 Loading...";
+
+      try {
+        const res = await fetch('https://mlapp-flaskapi.onrender.com/analyze', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': 'vamshi' // Use your actual API key here
+          },
+          body: JSON.stringify({ sentence })
+        });
+
+        const data = await res.json();
+        responseArea.textContent = res.ok
+          ? JSON.stringify(data, null, 2)
+          : `❌ Error: ${JSON.stringify(data, null, 2)}`;
+      } catch (error) {
+        responseArea.textContent = `⚠️ Fetch error: ${error}`;
+      }
+    });
+  </script>
+</body>
+</html>
